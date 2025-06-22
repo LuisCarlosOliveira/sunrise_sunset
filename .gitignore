@@ -1,7 +1,18 @@
 # === Ruby on Rails Backend ===
+# Ruby bytecode and artifacts
+*.rbc
+*.orig
+capybara-*.html
+.rspec
+rerun.txt
+pickle-email-*.html
+
 # Dependencies
 vendor/bundle/
 .bundle/
+/vendor/assets/bower_components
+*.bowerrc
+bower.json
 
 # Database
 *.sqlite3
@@ -15,11 +26,26 @@ storage/
 public/uploads/
 config/master.key
 config/credentials/*.key
+config/initializers/secret_token.rb
+/spec/tmp
+
+# Keep files that should be tracked
+!/log/.keep
+!/tmp/.keep
+!/storage/.keep
+
+# Test coverage
+/coverage/
 
 # Rails cache and assets
 public/assets/
 public/packs/
 public/packs-test/
+
+# Ruby environment
+.rvmrc
+.powenv
+.byebug_history
 
 # === Vite + React Frontend ===
 # Dependencies (catch anywhere in the repo)
@@ -27,9 +53,11 @@ node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+.yarn-integrity
 
 # Build outputs
 dist/
+dist-ssr/
 build/
 *.tsbuildinfo
 
@@ -39,6 +67,7 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+*.local
 
 # Vite specific
 .vite/
@@ -50,13 +79,26 @@ coverage/
 .nyc_output/
 .cache/
 
+# Logs
+logs/
+lerna-debug.log*
+pnpm-debug.log*
+
 # === General Development ===
 # IDEs and editors
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
+*.sw?
 *~
+
+# Visual Studio files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
 # OS generated files
 .DS_Store
