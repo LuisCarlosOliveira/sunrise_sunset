@@ -65,7 +65,7 @@ function formatGoldenHour(goldenHourData, type = 'morning') {
  * Table Header Component with Sorting
  * Provides accessible, sortable column headers with visual indicators
  */
-function TableHeader({ children, sortKey, currentSort, onSort, className = "" }) {
+function TableHeader({ children, sortKey, currentSort = {}, onSort, className = "" }) {
     const isSorted = currentSort.key === sortKey
     const isAscending = isSorted && currentSort.direction === 'asc'
 

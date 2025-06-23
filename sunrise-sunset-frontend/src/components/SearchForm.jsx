@@ -1,21 +1,20 @@
-// Main search form component that integrates all our pieces together
-// This demonstrates how clean architecture makes complex UIs simple and maintainable
+// SearchForm.jsx - Main search interface component
+// Location: src/components/SearchForm.jsx
+
 import React from 'react'
 import { Input, Button, QuickDateRanges } from '@/components/forms'
-import { useSearchWithApi } from '@/hooks/useApi'
 
 /**
  * SearchForm Component
  * 
- * This is the main user interface for searching sunrise/sunset data.
- * It integrates our custom hooks and reusable components to create
- * a complete, functional search experience.
+ * This component now receives the search state as props from the parent App component.
+ * This ensures that the form state and the application's data display state are synchronized.
  * 
- * Notice how clean this component is - most of the complexity is
- * encapsulated in our hooks and form components.
+ * This pattern is called "lifting state up" - we move shared state to the lowest common
+ * parent component that needs to access it.
  */
-export default function SearchForm() {
-    // Our custom hook provides all the state and actions we need
+export default function SearchForm({ searchState }) {
+    // Destructure all the state and actions from the shared searchState prop
     const {
         // Form state
         formData,
@@ -32,7 +31,7 @@ export default function SearchForm() {
         resetAll,
         retryLastSearch,
         canRetry
-    } = useSearchWithApi()
+    } = searchState
 
     /**
      * Handle quick date range selection

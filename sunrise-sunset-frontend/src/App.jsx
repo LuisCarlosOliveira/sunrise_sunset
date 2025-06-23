@@ -7,26 +7,24 @@ import { useSearchWithApi } from '@/hooks/useApi'
 /**
  * Main App component for the Sunrise Sunset application
  * 
- * This component orchestrates the entire user experience by combining:
- * - Search functionality (form and API integration)
- * - Data visualization (charts and graphs)
- * - Detailed data presentation (comprehensive tables)
+ * This component orchestrates the entire user experience by managing
+ * the application's central state and coordinating between components.
  * 
- * The architecture demonstrates separation of concerns: this component
- * handles layout and coordination, while specialized components handle
- * their specific domains (search, visualization, data display).
+ * IMPORTANT: This component manages the single source of truth for
+ * search state, which is then shared with child components as needed.
  */
 function App() {
-  // Our integrated hook provides all the state management we need
-  // This is like having a control panel that tells us everything about
-  // the current state of our application
+  // Single source of truth for all search-related state
+  // This hook instance is shared across the entire application
+  const searchState = useSearchWithApi()
+
   const {
     data,           // The formatted sunrise/sunset data from the API
     loading,        // Whether we're currently fetching data
     error,          // Any error that occurred during the last request
     hasSearched,    // Whether the user has attempted a search yet
     hasData         // Whether we have valid data to display
-  } = useSearchWithApi()
+  } = searchState
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -47,12 +45,11 @@ function App() {
         {/* Main Application Content */}
         <main className="max-w-7xl mx-auto space-y-8">
 
-          {/* Search Interface - Always visible at the top */}
-          {/* This is our primary user interaction point */}
-          <SearchForm />
+          {/* Search Interface - Pass the search state as props */}
+          {/* This ensures the SearchForm and App component share the same state */}
+          <SearchForm searchState={searchState} />
 
           {/* Data Visualization Section - Only shown when we have successful results */}
-          {/* This conditional rendering creates a progressive disclosure pattern */}
           {hasData && (
             <section className="space-y-8">
               {/* Section Header with Dynamic Information */}
@@ -76,17 +73,14 @@ function App() {
               </div>
 
               {/* Interactive Charts Section */}
-              {/* This is where users can visualize patterns and trends */}
               <ChartsContainer data={data} />
 
               {/* Detailed Data Table Section */}
-              {/* This provides precise values for users who need specific information */}
               <SunriseDataTable data={data} />
             </section>
           )}
 
           {/* Welcome State - Show when no search has been performed */}
-          {/* This provides guidance and sets expectations for new users */}
           {!hasSearched && !loading && (
             <section className="text-center py-16">
               <div className="max-w-md mx-auto">
