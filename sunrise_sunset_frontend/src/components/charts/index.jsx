@@ -8,8 +8,8 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
-    Area,
-    AreaChart
+    BarChart,
+    Bar
 } from 'recharts'
 import { format } from 'date-fns'
 import { timeToMinutes, minutesToTime, parseDayLength, parseGoldenHourTime } from '@/utils/timeUtils'
@@ -168,7 +168,7 @@ export function DayLengthChart({ data, className = "" }) {
 
             <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                         <XAxis
                             dataKey="date"
@@ -183,23 +183,21 @@ export function DayLengthChart({ data, className = "" }) {
                         <Tooltip
                             formatter={(value) => [`${Math.floor(value / 60)}h ${value % 60}m`, 'Daylight']}
                             labelStyle={{ color: '#374151' }}
+                            contentStyle={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
                         />
 
-                        <Area
-                            type="monotone"
+                        <Bar
                             dataKey="dayLength"
-                            stroke="#3b82f6"
-                            fill="url(#dayLengthGradient)"
-                            strokeWidth={2}
+                            fill="#3b82f6"
+                            radius={[4, 4, 0, 0]}
+                            opacity={0.8}
                         />
-
-                        <defs>
-                            <linearGradient id="dayLengthGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05} />
-                            </linearGradient>
-                        </defs>
-                    </AreaChart>
+                    </BarChart>
                 </ResponsiveContainer>
             </div>
         </div>

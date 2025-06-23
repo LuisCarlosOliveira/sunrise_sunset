@@ -203,7 +203,7 @@ export function SunriseDataTable({ data, className = "" }) {
             </div>
 
             <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="bg-blue-50 p-3 rounded-lg">
                         <div className="font-medium text-blue-900">Earliest Sunrise</div>
                         <div className="text-blue-700">
@@ -234,13 +234,6 @@ export function SunriseDataTable({ data, className = "" }) {
                                     !max || (day.day_length && day.day_length > max.day_length) ? day : max, null)
                                 return longest ? formatDuration(longest.day_length) : 'N/A'
                             })()}
-                        </div>
-                    </div>
-
-                    <div className="bg-purple-50 p-3 rounded-lg">
-                        <div className="font-medium text-purple-900">Data Source</div>
-                        <div className="text-purple-700 capitalize">
-                            {data.dataSource || 'Unknown'}
                         </div>
                     </div>
                 </div>

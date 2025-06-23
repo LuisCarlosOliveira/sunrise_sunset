@@ -18,8 +18,7 @@ function App() {
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Discover sunrise and sunset times, golden hour moments, and solar data
-            for any location around the world. Plan your perfect photography sessions
-            and outdoor adventures with precise astronomical information.
+            for any location around the world.
           </p>
         </header>
 
@@ -36,16 +35,6 @@ function App() {
                 <p className="text-gray-600">
                   Showing {data.totalDays} days from {data.dateRange?.start} to {data.dateRange?.end}
                 </p>
-
-                {/* Data Source Indicator - Shows whether data came from cache or live API */}
-                {data.dataSource && (
-                  <div className="inline-flex items-center space-x-2 mt-2 px-3 py-1 bg-blue-100 border border-blue-200 rounded-full text-sm">
-                    <div className={`w-2 h-2 rounded-full ${data.dataSource === 'cache' ? 'bg-green-500' : 'bg-blue-500'}`} />
-                    <span className="text-blue-800">
-                      Data from {data.dataSource === 'cache' ? 'cache' : 'live API'}
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Interactive Charts Section */}
@@ -101,13 +90,6 @@ function App() {
           )}
         </main>
 
-        <footer className="text-center mt-16 text-gray-500">
-          <p className="text-sm">
-            Built with React, Vite, and Tailwind CSS •
-            Powered by Sunrise Sunset API •
-            Ready for Photography Planning
-          </p>
-        </footer>
       </div>
     </div>
   )
