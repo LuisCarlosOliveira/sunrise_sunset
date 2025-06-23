@@ -1,7 +1,7 @@
 class GeocodingService
   include HTTParty
   
-  base_uri 'https://nominatim.openstreetmap.org'
+  base_uri ENV.fetch('GEOCODING_API_BASE_URL', 'https://nominatim.openstreetmap.org')
   headers 'User-Agent' => 'SunriseApp/1.0 (Educational Project)'
   
   def initialize(location_name)

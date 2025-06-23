@@ -1,9 +1,6 @@
-/* Global styles for the Sunrise Sunset application */
 @import "tailwindcss";
 
-/* v4 CSS-first theme configuration */
 @theme {
-    /* Custom colors for our sunrise/sunset theme */
     --color-sunrise-50: #fef7e6;
     --color-sunrise-100: #fdefc2;
     --color-sunrise-200: #fbe189;
@@ -83,20 +80,7 @@
     }
 }
 
-/* Base styles */
-html {
-    font-family: var(--font-family-sans);
-    scroll-behavior: smooth;
-}
-
-body {
-    @apply bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen;
-    @apply text-gray-900 antialiased;
-}
-
-*:focus {
-    @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white;
-}
+/* Removed duplicate styles - kept @layer base version below */
 
 /* Component styles */
 .card {

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
@@ -8,7 +8,7 @@ export default defineConfig({
 
   // Development server configuration
   server: {
-    port: 3001,
+    port: process.env.VITE_DEV_PORT || 3001,
     host: true,
     cors: true,
     open: true,
@@ -17,12 +17,12 @@ export default defineConfig({
   // Path resolution for cleaner imports
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@styles': path.resolve(__dirname, './src/styles'),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+      '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
+      '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
+      '@hooks': fileURLToPath(new URL('./src/hooks', import.meta.url)),
+      '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
     },
   },
 

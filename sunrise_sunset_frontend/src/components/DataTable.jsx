@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { format } from 'date-fns'
 import { formatTime, formatDuration, formatGoldenHour } from '@/utils/timeUtils'
 
@@ -49,9 +49,11 @@ function TableHeader({ children, sortKey, currentSort = {}, onSort, className = 
 export function SunriseDataTable({ data, className = "" }) {
     const [sort, setSort] = useState({ key: 'date', direction: 'asc' })
     const [use12HourFormat, setUse12HourFormat] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
 
-    const sortedData = useMemo(() => {
-        if (!data?.days) return []
+    const { sortedData, paginatedData, totalPages } = useMemo(() => {
+        if (!data?.days) return { sortedData: [], paginatedData: [], totalPages: 0 }
 
         const sortedDays = [...data.days].sort((a, b) => {
             let aValue, bValue
@@ -82,8 +84,17 @@ export function SunriseDataTable({ data, className = "" }) {
             return 0
         })
 
-        return sortedDays
-    }, [data?.days, sort])
+        const totalPages = Math.ceil(sortedDays.length / itemsPerPage)
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const paginatedDays = sortedDays.slice(startIndex, startIndex + itemsPerPage)
+
+        return { sortedData: sortedDays, paginatedData: paginatedDays, totalPages }
+    }, [data?.days, sort, currentPage, itemsPerPage])
+
+    // Reset to first page when sorting changes
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [sort])
 
     if (!data?.days?.length) {
         return (
@@ -155,7 +166,7 @@ export function SunriseDataTable({ data, className = "" }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedData.map((day) => {
+                        {paginatedData.map((day) => {
                             const morningGolden = formatGoldenHour(day.golden_hour, 'morning')
                             const eveningGolden = formatGoldenHour(day.golden_hour, 'evening')
 
@@ -201,6 +212,36 @@ export function SunriseDataTable({ data, className = "" }) {
                     </tbody>
                 </table>
             </div>
+
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center space-x-2">
+                        <button
+                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Previous
+                        </button>
+                        
+                        <span className="text-sm text-gray-600">
+                            Page {currentPage} of {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Next
+                        </button>
+                    </div>
+
+                    <div className="text-sm text-gray-600">
+                        Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, sortedData.length)} of {sortedData.length} days
+                    </div>
+                </div>
+            )}
 
             <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">

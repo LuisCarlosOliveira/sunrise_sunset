@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-// Configuration constants
+// Configuration constants with environment variable support
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:3000',
-    TIMEOUT: 10000,
+    BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+    TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT) || 60000,
     ENDPOINTS: {
         SUNRISE: '/sunrise',
         HEALTH: '/health'
@@ -168,7 +168,6 @@ export async function checkApiHealth() {
 
 /**
  * Utility function to format API response data for components
- * This provides a clean interface between raw API data and React components
  */
 export function formatSunriseData(apiResponse) {
     if (!apiResponse?.data) {

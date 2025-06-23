@@ -86,6 +86,7 @@ pnpm-debug.log*
 
 # === General Development ===
 # IDEs and editors
+.claude/
 .vscode/
 !.vscode/extensions.json
 .idea/
