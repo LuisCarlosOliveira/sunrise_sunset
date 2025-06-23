@@ -7,7 +7,8 @@ RUN apk add --no-cache \
     postgresql-dev \
     tzdata \
     bash \
-    curl
+    curl \
+    yaml-dev
 
 # Create app directory
 WORKDIR /app
