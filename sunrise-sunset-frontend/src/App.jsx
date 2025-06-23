@@ -1,34 +1,147 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react'
+import SearchForm from '@/components/SearchForm'
+import { ChartsContainer } from '@/components/charts'
+import { SunriseDataTable } from '@/components/DataTable'
+import { useSearchWithApi } from '@/hooks/useApi'
 
+/**
+ * Main App component for the Sunrise Sunset application
+ * 
+ * This component orchestrates the entire user experience by combining:
+ * - Search functionality (form and API integration)
+ * - Data visualization (charts and graphs)
+ * - Detailed data presentation (comprehensive tables)
+ * 
+ * The architecture demonstrates separation of concerns: this component
+ * handles layout and coordination, while specialized components handle
+ * their specific domains (search, visualization, data display).
+ */
 function App() {
-  const [count, setCount] = useState(0)
+  // Our integrated hook provides all the state management we need
+  // This is like having a control panel that tells us everything about
+  // the current state of our application
+  const {
+    data,           // The formatted sunrise/sunset data from the API
+    loading,        // Whether we're currently fetching data
+    error,          // Any error that occurred during the last request
+    hasSearched,    // Whether the user has attempted a search yet
+    hasData         // Whether we have valid data to display
+  } = useSearchWithApi()
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+
+        {/* Application Header - Always visible */}
+        <header className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gradient-sunrise mb-4">
+            Sunrise Sunset Tracker
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover sunrise and sunset times, golden hour moments, and solar data
+            for any location around the world. Plan your perfect photography sessions
+            and outdoor adventures with precise astronomical information.
+          </p>
+        </header>
+
+        {/* Main Application Content */}
+        <main className="max-w-7xl mx-auto space-y-8">
+
+          {/* Search Interface - Always visible at the top */}
+          {/* This is our primary user interaction point */}
+          <SearchForm />
+
+          {/* Data Visualization Section - Only shown when we have successful results */}
+          {/* This conditional rendering creates a progressive disclosure pattern */}
+          {hasData && (
+            <section className="space-y-8">
+              {/* Section Header with Dynamic Information */}
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  Solar Data for {data.location}
+                </h2>
+                <p className="text-gray-600">
+                  Showing {data.totalDays} days from {data.dateRange?.start} to {data.dateRange?.end}
+                </p>
+
+                {/* Data Source Indicator - Shows whether data came from cache or live API */}
+                {data.dataSource && (
+                  <div className="inline-flex items-center space-x-2 mt-2 px-3 py-1 bg-blue-100 border border-blue-200 rounded-full text-sm">
+                    <div className={`w-2 h-2 rounded-full ${data.dataSource === 'cache' ? 'bg-green-500' : 'bg-blue-500'}`} />
+                    <span className="text-blue-800">
+                      Data from {data.dataSource === 'cache' ? 'cache' : 'live API'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Interactive Charts Section */}
+              {/* This is where users can visualize patterns and trends */}
+              <ChartsContainer data={data} />
+
+              {/* Detailed Data Table Section */}
+              {/* This provides precise values for users who need specific information */}
+              <SunriseDataTable data={data} />
+            </section>
+          )}
+
+          {/* Welcome State - Show when no search has been performed */}
+          {/* This provides guidance and sets expectations for new users */}
+          {!hasSearched && !loading && (
+            <section className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                {/* Visual focal point with gradient matching our theme */}
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-sunrise-500 to-sunset-500 rounded-full mb-6">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Ready to Explore Solar Data
+                </h3>
+
+                <p className="text-gray-600 mb-6">
+                  Enter a location and date range above to discover sunrise times, sunset times,
+                  golden hour periods, and comprehensive solar information for any place on Earth.
+                </p>
+
+                {/* Feature preview cards - Shows what users can expect */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Interactive Charts</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Detailed Tables</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Golden Hour Times</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+        </main>
+
+        {/* Application Footer - Always visible */}
+        <footer className="text-center mt-16 text-gray-500">
+          <p className="text-sm">
+            Built with React, Vite, and Tailwind CSS •
+            Powered by Sunrise Sunset API •
+            Ready for Photography Planning
+          </p>
+        </footer>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 

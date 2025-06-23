@@ -1,10 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+// src/main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './styles/globals.css'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+/**
+ * Main entry point for the Sunrise Sunset application
+ * This file bootstraps the React application and mounts it to the DOM
+ */
+
+// Create the root React element and render our application
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>,
 )

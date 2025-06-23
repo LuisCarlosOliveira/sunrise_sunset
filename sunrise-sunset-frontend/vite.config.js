@@ -1,18 +1,19 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [react()],
-  
+  plugins: [react(), tailwindcss()],
+
   // Development server configuration
   server: {
-    port: 3001, 
+    port: 3001,
     host: true,
-    cors: true, 
-    open: true, 
+    cors: true,
+    open: true,
   },
-  
+
   // Path resolution for cleaner imports
   resolve: {
     alias: {
@@ -24,21 +25,21 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, './src/styles'),
     },
   },
-  
+
   // Build configuration for production optimization
   build: {
     outDir: 'dist',
-    sourcemap: true, 
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          charts: ['recharts'], 
+          charts: ['recharts'],
         },
       },
     },
   },
-  
+
   // Environment variable prefix
   envPrefix: 'VITE_',
 })
