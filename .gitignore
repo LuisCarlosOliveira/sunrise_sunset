@@ -67,6 +67,7 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
 *.local
 
 # Vite specific
@@ -86,6 +87,7 @@ pnpm-debug.log*
 
 # === General Development ===
 # IDEs and editors
+.claude/
 .vscode/
 !.vscode/extensions.json
 .idea/

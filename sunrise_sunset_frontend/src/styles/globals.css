@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+@theme {
+    --color-sunrise-50: #fef7e6;
+    --color-sunrise-100: #fdefc2;
+    --color-sunrise-200: #fbe189;
+    --color-sunrise-300: #f9d050;
+    --color-sunrise-400: #f6c42d;
+    --color-sunrise-500: #f3b519;
+    /* Main sunrise orange */
+    --color-sunrise-600: #e6a015;
+    --color-sunrise-700: #cc8912;
+    --color-sunrise-800: #b3710f;
+    --color-sunrise-900: #99590c;
+
+    --color-sunset-50: #fef3f2;
+    --color-sunset-100: #fee4e2;
+    --color-sunset-200: #fccfcb;
+    --color-sunset-300: #f9aba6;
+    --color-sunset-400: #f78871;
+    --color-sunset-500: #f56449;
+    /* Main sunset red */
+    --color-sunset-600: #e6482d;
+    --color-sunset-700: #d1341f;
+    --color-sunset-800: #b22317;
+    --color-sunset-900: #991b12;
+
+    --color-golden-50: #fffbeb;
+    --color-golden-100: #fef3c7;
+    --color-golden-200: #fde68a;
+    --color-golden-300: #fcd34d;
+    --color-golden-400: #fbbf24;
+    --color-golden-500: #f59e0b;
+    /* Golden hour */
+    --color-golden-600: #d97706;
+    --color-golden-700: #b45309;
+    --color-golden-800: #92400e;
+    --color-golden-900: #78350f;
+
+    /* Custom animations */
+    --animate-fade-in: fadeIn 0.5s ease-in-out;
+    --animate-slide-up: slideUp 0.3s ease-out;
+    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    /* Enhanced spacing */
+    --spacing-18: 4.5rem;
+    --spacing-88: 22rem;
+    --spacing-128: 32rem;
+
+    /* Font family */
+    --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Removed duplicate styles - kept @layer base version below */
+
+/* Component styles */
+.card {
+    @apply bg-white/80 backdrop-blur-sm rounded-lg shadow-lg border border-white/20;
+    @apply transition-all duration-300 hover:shadow-xl;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-sunrise-500 to-sunset-500 text-white;
+    @apply px-6 py-3 rounded-lg font-medium;
+    @apply transition-all duration-200 hover:from-sunrise-600 hover:to-sunset-600;
+    @apply focus:ring-2 focus:ring-golden-500 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300;
+    @apply px-6 py-3 rounded-lg font-medium;
+    @apply transition-all duration-200 hover:bg-gray-50 hover:border-gray-400;
+    @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg;
+    @apply bg-white/90 backdrop-blur-sm;
+    @apply focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0;
+    @apply transition-colors duration-200;
+    @apply placeholder-gray-400;
+}
+
+.input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+}
+
+.data-table {
+    @apply w-full border-collapse bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden;
+    @apply shadow-lg border border-white/20;
+}
+
+.data-table th {
+    @apply bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4;
+    @apply font-semibold text-gray-900 text-left border-b border-gray-200;
+}
+
+.data-table td {
+    @apply px-6 py-4 border-b border-gray-100;
+    @apply transition-colors duration-150;
+}
+
+.data-table tbody tr:hover {
+    @apply bg-blue-50/50;
+}
+
+.spinner {
+    @apply inline-block w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full;
+    animation: spin 1s linear infinite;
+}
+
+/* Utility classes */
+.glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+.glass-strong {
+    @apply bg-white/20 backdrop-blur-lg border border-white/30;
+}
+
+.text-gradient-sunrise {
+    @apply bg-gradient-to-r from-sunrise-600 to-golden-500 bg-clip-text text-transparent;
+}
+
+.text-gradient-sunset {
+    @apply bg-gradient-to-r from-sunset-600 to-red-500 bg-clip-text text-transparent;
+}
+
+.animate-in {
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Base layer customizations */
+@layer base {
+
+    /* Establish a consistent font foundation */
+    html {
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Smooth scrolling for better user experience */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Dark mode friendly body styling */
+    body {
+        @apply bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen;
+        @apply text-gray-900 antialiased;
+    }
+
+    /* Enhanced focus indicators for accessibility */
+    *:focus {
+        @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white;
+    }
+}
+
+/* Component layer for reusable patterns */
+@layer components {
+
+    /* Card component for data display */
+    .card {
+        @apply bg-white/80 backdrop-blur-sm rounded-lg shadow-lg border border-white/20;
+        @apply transition-all duration-300 hover:shadow-xl;
+    }
+
+    /* Primary button styling */
+    .btn-primary {
+        @apply bg-gradient-to-r from-sunrise-500 to-sunset-500 text-white;
+        @apply px-6 py-3 rounded-lg font-medium;
+        @apply transition-all duration-200 hover:from-sunrise-600 hover:to-sunset-600;
+        @apply focus:ring-2 focus:ring-golden-500 focus:ring-offset-2;
+        @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    /* Secondary button styling */
+    .btn-secondary {
+        @apply bg-white text-gray-700 border border-gray-300;
+        @apply px-6 py-3 rounded-lg font-medium;
+        @apply transition-all duration-200 hover:bg-gray-50 hover:border-gray-400;
+        @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    }
+
+    /* Input field styling */
+    .input-field {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg;
+        @apply bg-white/90 backdrop-blur-sm;
+        @apply focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0;
+        @apply transition-colors duration-200;
+        @apply placeholder-gray-400;
+    }
+
+    /* Error state styling */
+    .input-error {
+        @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+    }
+
+    /* Data table styling */
+    .data-table {
+        @apply w-full border-collapse bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden;
+        @apply shadow-lg border border-white/20;
+    }
+
+    .data-table th {
+        @apply bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4;
+        @apply font-semibold text-gray-900 text-left border-b border-gray-200;
+    }
+
+    .data-table td {
+        @apply px-6 py-4 border-b border-gray-100;
+        @apply transition-colors duration-150;
+    }
+
+    .data-table tbody tr:hover {
+        @apply bg-blue-50/50;
+    }
+
+    /* Loading spinner */
+    .spinner {
+        @apply inline-block w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full;
+        animation: spin 1s linear infinite;
+    }
+}
+
+/* Utility layer for specific adjustments */
+@layer utilities {
+
+    /* Glassmorphism utility classes */
+    .glass {
+        @apply bg-white/10 backdrop-blur-md border border-white/20;
+    }
+
+    .glass-strong {
+        @apply bg-white/20 backdrop-blur-lg border border-white/30;
+    }
+
+    /* Text gradient utilities for headings */
+    .text-gradient-sunrise {
+        @apply bg-gradient-to-r from-sunrise-600 to-golden-500 bg-clip-text text-transparent;
+    }
+
+    .text-gradient-sunset {
+        @apply bg-gradient-to-r from-sunset-600 to-red-500 bg-clip-text text-transparent;
+    }
+
+    /* Animation utilities */
+    .animate-in {
+        animation: slideUp 0.5s ease-out;
+    }
+}
+
+/* Keyframe definitions */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
