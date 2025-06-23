@@ -20,6 +20,8 @@ gem "httparty"
 
 gem "rack-cors"
 
+gem "dotenv-rails"
+
 gem "pry-rails", group: [:development, :test]
 
 group :development, :test do

@@ -10,100 +10,113 @@ A full-stack web application to track sunrise and sunset times, built with Ruby 
 - Golden hour calculations
 - Responsive design with Tailwind CSS
 
-## Docker Setup (Recommended)
+## Setup Instructions
 
 ### Prerequisites
-- Docker
-- Docker Compose
+- Ruby 3.4.4
+- Node.js 20+
+- PostgreSQL (running and accessible)
+- Git
+- Bundler gem
 
-### Quick Start
+### Environment Configuration
 
-1. **Clone and navigate to the project:**
+Both backend and frontend require environment variables to be configured:
+
+#### Backend Environment (.env)
+Copy the example file and configure:
+```bash
+cd sunrise_sunset_backend
+cp .env.example .env
+```
+
+Edit the `.env` file with your specific configuration values.
+
+#### Frontend Environment (.env)
+Copy the example file and configure:
+```bash
+cd sunrise_sunset_frontend
+cp .env.example .env
+```
+
+Edit the `.env` file with your specific configuration values.
+
+### Installation & Setup
+
+#### 1. Backend Setup (Rails)
+```bash
+cd sunrise_sunset_backend
+
+# Install dependencies
+bundle install
+
+# Setup database
+rails db:create
+rails db:migrate
+
+# Start the server
+rails server
+```
+
+The backend will be available at `http://localhost:3000`
+
+#### 2. Frontend Setup (React + Vite)
+```bash
+cd sunrise_sunset_frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3001`
+
+### Running the Application
+
+1. **Start the backend:**
    ```bash
-   cd /path/to/sunrise_sunset
+   cd sunrise_sunset_backend
+   rails server
    ```
 
-2. **Build and run with Docker Compose:**
+2. **Start the frontend (in a new terminal):**
    ```bash
-   docker-compose up --build
+   cd sunrise_sunset_frontend
+   npm run dev
    ```
 
 3. **Access the application:**
    - Frontend: http://localhost:3001
    - Backend API: http://localhost:3000
-   - Database: localhost:5432
 
-### Docker Services
+### Development Commands
 
-- **frontend**: React app served with Nginx (port 80/3001)
-- **backend**: Rails API server (port 3000)
-- **database**: PostgreSQL 16 (port 5432)
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and modify as needed:
+#### Backend (Rails)
 ```bash
-cp .env.example .env
+# Run tests
+bundle exec rspec
+
+# Run linter
+bundle exec rubocop
+
+# Database commands
+rails db:migrate
+rails db:seed
+rails db:reset
 ```
 
-Key environment variables:
-- `DATABASE_URL`: PostgreSQL connection string
-- `SECRET_KEY_BASE`: Rails secret key
-- `SUNRISE_API_BASE_URL`: External sunrise API endpoint
-- `GEOCODING_API_BASE_URL`: Geocoding service endpoint
-- `VITE_API_BASE_URL`: Frontend API base URL
-
-### Development with Docker
-
-For development with hot reloading:
-
+#### Frontend (React)
 ```bash
-# Use development docker-compose
-docker-compose -f docker-compose.dev.yml up --build
+# Build for production
+npm run build
 
-# Access:
-# - Frontend: http://localhost:3001 (hot reload enabled)
-# - Backend: http://localhost:3000
-# - Database: localhost:5433
-```
+# Preview production build
+npm run preview
 
-### Docker Commands
-
-```bash
-# Build images
-docker-compose build
-
-# Start services
-docker-compose up
-
-# Start in background
-docker-compose up -d
-
-# View logs
-docker-compose logs -f [service_name]
-
-# Stop services
-docker-compose down
-
-# Reset everything (including volumes)
-docker-compose down -v --remove-orphans
-```
-
-## Manual Setup (Alternative)
-
-### Backend (Rails)
-```bash
-cd sunrise_sunset_backend
-bundle install
-rails db:create db:migrate
-rails server
-```
-
-### Frontend (React)
-```bash
-cd sunrise_sunset_frontend
-npm install
-npm run dev
+# Lint code
+npm run lint
 ```
 
 ## API Endpoints
@@ -127,8 +140,6 @@ npm run dev
 - Axios for HTTP requests
 
 **Infrastructure:**
-- Docker & Docker Compose
-- Nginx for frontend serving
 - PostgreSQL database
 
 ## Architecture
