@@ -1,32 +1,97 @@
-# Sunrise Sunset Project
+# Sunrise Sunset Application
 
-This repository contains a full-stack application for tracking sunrise and sunset data worldwide.
-
-## Project Structure
-- `sunrise_sunset_backend/`: Ruby on Rails API for sunrise/sunset data
-- `sunrise_sunset_frontend/`: React + Vite frontend application
+A full-stack web application to track sunrise and sunset times, built with Ruby on Rails (backend) and React + Vite (frontend).
 
 ## Features
 
-### Backend (Ruby on Rails)
-- ✅ REST API endpoint for sunrise/sunset data
-- ✅ Location geocoding via OpenStreetMap Nominatim
-- ✅ Data caching with PostgreSQL database
-- ✅ Batch processing for large date ranges
-- ✅ Comprehensive error handling
-- ✅ Arctic/Antarctic edge case support
+- Search sunrise/sunset data by location
+- Interactive charts showing solar patterns
+- Detailed data tables with pagination
+- Golden hour calculations
+- Responsive design with Tailwind CSS
 
-### Frontend (React + Vite)
-- ✅ Location and date range input forms
-- ✅ Interactive charts (Recharts) with adaptive data sampling
-- ✅ Detailed data tables with sorting
-- ✅ Golden hour calculations and display
-- ✅ Responsive design with Tailwind CSS
-- ✅ Error handling and retry functionality
+## Docker Setup (Recommended)
 
-## Quick Start
+### Prerequisites
+- Docker
+- Docker Compose
 
-### Backend Setup
+### Quick Start
+
+1. **Clone and navigate to the project:**
+   ```bash
+   cd /path/to/sunrise_sunset
+   ```
+
+2. **Build and run with Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the application:**
+   - Frontend: http://localhost:3001
+   - Backend API: http://localhost:3000
+   - Database: localhost:5432
+
+### Docker Services
+
+- **frontend**: React app served with Nginx (port 80/3001)
+- **backend**: Rails API server (port 3000)
+- **database**: PostgreSQL 16 (port 5432)
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and modify as needed:
+```bash
+cp .env.example .env
+```
+
+Key environment variables:
+- `DATABASE_URL`: PostgreSQL connection string
+- `SECRET_KEY_BASE`: Rails secret key
+- `SUNRISE_API_BASE_URL`: External sunrise API endpoint
+- `GEOCODING_API_BASE_URL`: Geocoding service endpoint
+- `VITE_API_BASE_URL`: Frontend API base URL
+
+### Development with Docker
+
+For development with hot reloading:
+
+```bash
+# Use development docker-compose
+docker-compose -f docker-compose.dev.yml up --build
+
+# Access:
+# - Frontend: http://localhost:3001 (hot reload enabled)
+# - Backend: http://localhost:3000
+# - Database: localhost:5433
+```
+
+### Docker Commands
+
+```bash
+# Build images
+docker-compose build
+
+# Start services
+docker-compose up
+
+# Start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f [service_name]
+
+# Stop services
+docker-compose down
+
+# Reset everything (including volumes)
+docker-compose down -v --remove-orphans
+```
+
+## Manual Setup (Alternative)
+
+### Backend (Rails)
 ```bash
 cd sunrise_sunset_backend
 bundle install
@@ -34,56 +99,48 @@ rails db:create db:migrate
 rails server
 ```
 
-### Frontend Setup
+### Frontend (React)
 ```bash
 cd sunrise_sunset_frontend
-cp .env.example .env  # Copy environment template
 npm install
 npm run dev
 ```
 
-## Configuration
+## API Endpoints
 
-### Backend Environment Variables
-Copy `.env.example` to `.env` and configure:
+- `GET /sunrise?location=<location>&start_date=<date>&end_date=<date>`
+- `GET /up` (health check)
+
+## Tech Stack
+
+**Backend:**
+- Ruby 3.4.4
+- Rails 8.0.2
+- PostgreSQL
+- HTTParty for API calls
+
+**Frontend:**
+- React 19
+- Vite
+- Tailwind CSS
+- Recharts for visualization
+- Axios for HTTP requests
+
+**Infrastructure:**
+- Docker & Docker Compose
+- Nginx for frontend serving
+- PostgreSQL database
+
+## Architecture
+
 ```
-DATABASE_URL=postgresql://localhost/sunrise_sunset_development
-PORT=3000
-API_TIMEOUT_SECONDS=15
+Frontend (React/Vite) → Backend (Rails API) → External APIs
+                                ↓
+                          PostgreSQL Database
 ```
 
-### Frontend Environment Variables
-Copy `.env.example` to `.env` and configure:
-```
-VITE_API_BASE_URL=http://localhost:3000
-VITE_API_TIMEOUT=60000
-```
-
-## Performance Optimizations
-
-- **Timeout Handling**: Frontend timeout increased to 60s for large date ranges
-- **Batch Processing**: Backend processes API calls in batches of 10
-- **Dynamic Charts**: Charts display all data with intelligent X-axis labeling
-- **Table Pagination**: Data tables paginated at 10 results per page
-- **Database Caching**: Repeated queries return cached data instantly
-
-## API Usage
-
-### Get Sunrise/Sunset Data
-```
-GET /sunrise?location=Berlin&start_date=2024-01-01&end_date=2024-01-07
-```
-
-**Response:**
-```json
-{
-  "location": "Berlin, Germany",
-  "requested_date_range": {
-    "start": "2024-01-01",
-    "end": "2024-01-07"
-  },
-  "data_source": "cache",
-  "total_days": 7,
-  "data": [...]
-}
-```
+The application follows a clean architecture with:
+- Service layer for business logic
+- API clients for external integrations
+- Caching layer for performance
+- RESTful API design
