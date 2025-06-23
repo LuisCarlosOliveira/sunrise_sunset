@@ -1,19 +1,4 @@
-// Reusable form components with consistent styling and behavior
-// These components handle accessibility, validation display, and user interaction patterns
 import React from 'react'
-
-/**
- * Base Input Component
- * 
- * This serves as the foundation for all input types. It handles:
- * - Consistent styling with our design system
- * - Error state management and display
- * - Accessibility features (labels, ARIA attributes)
- * - Focus management and user feedback
- * 
- * The compound pattern (Input.Text, Input.Date) keeps related components together
- * while allowing for specialized behavior in each variant.
- */
 function BaseInput({
     label,
     error,
@@ -22,29 +7,25 @@ function BaseInput({
     children,
     className = ''
 }) {
-    // Generate unique IDs for accessibility
     const inputId = React.useId()
     const errorId = error ? `${inputId}-error` : undefined
     const helpId = helpText ? `${inputId}-help` : undefined
 
     return (
-        <div className={`space-y-2 ${className}`}>
-            {/* Label with required indicator */}
-            {label && (
-                <label
-                    htmlFor={inputId}
-                    className="block text-sm font-medium text-gray-700"
-                >
-                    {label}
-                    {required && (
-                        <span className="text-red-500 ml-1" aria-label="required">
-                            *
-                        </span>
-                    )}
-                </label>
-            )}
+        <div className={`space-y-2 ${className}`}>            {label && (
+            <label
+                htmlFor={inputId}
+                className="block text-sm font-medium text-gray-700"
+            >
+                {label}
+                {required && (
+                    <span className="text-red-500 ml-1" aria-label="required">
+                        *
+                    </span>
+                )}
+            </label>
+        )}
 
-            {/* Clone the child input element and add our props */}
             {React.cloneElement(children, {
                 id: inputId,
                 'aria-invalid': error ? 'true' : 'false',
@@ -52,14 +33,12 @@ function BaseInput({
                 className: `input-field ${error ? 'input-error' : ''} ${children.props.className || ''}`
             })}
 
-            {/* Help text */}
             {helpText && (
                 <p id={helpId} className="text-sm text-gray-500">
                     {helpText}
                 </p>
             )}
 
-            {/* Error message with icon */}
             {error && (
                 <p id={errorId} className="text-sm text-red-600 flex items-center space-x-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -72,12 +51,6 @@ function BaseInput({
     )
 }
 
-/**
- * Text Input Component
- * 
- * For location input and other text fields
- * Includes debouncing capability for search-as-you-type functionality
- */
 function TextInput({
     value,
     onChange,
@@ -88,33 +61,27 @@ function TextInput({
     const [internalValue, setInternalValue] = React.useState(value || '')
     const timeoutRef = React.useRef(null)
 
-    // Handle debounced input for performance
     const handleChange = React.useCallback((e) => {
         const newValue = e.target.value
         setInternalValue(newValue)
 
         if (debounceMs > 0) {
-            // Clear previous timeout
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current)
             }
 
-            // Set new timeout
             timeoutRef.current = setTimeout(() => {
                 onChange(newValue)
             }, debounceMs)
         } else {
-            // Immediate callback for non-debounced inputs
             onChange(newValue)
         }
     }, [onChange, debounceMs])
 
-    // Sync internal value with external value changes
     React.useEffect(() => {
         setInternalValue(value || '')
     }, [value])
 
-    // Cleanup timeout on unmount
     React.useEffect(() => {
         return () => {
             if (timeoutRef.current) {
@@ -130,18 +97,12 @@ function TextInput({
                 value={internalValue}
                 onChange={handleChange}
                 placeholder={placeholder}
-                autoComplete="off" // Prevent browser autocomplete for location search
+                autoComplete="off"
             />
         </BaseInput>
     )
 }
 
-/**
- * Date Input Component
- * 
- * For start and end date selection
- * Includes intelligent defaults and range validation
- */
 function DateInput({
     value,
     onChange,
@@ -149,8 +110,6 @@ function DateInput({
     max,
     ...baseProps
 }) {
-    // Calculate reasonable defaults for min/max dates
-    const today = new Date().toISOString().split('T')[0]
     const fiveYearsAgo = new Date()
     fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5)
     const twoYearsFromNow = new Date()
@@ -172,15 +131,6 @@ function DateInput({
     )
 }
 
-/**
- * Location Search Input Component
- * 
- * Specialized input for location search with enhanced UX features:
- * - Search icon
- * - Clear button
- * - Loading state
- * - Suggestions placeholder (for future enhancement)
- */
 function LocationInput({
     value,
     onChange,
@@ -197,7 +147,6 @@ function LocationInput({
     return (
         <BaseInput {...baseProps}>
             <div className="relative">
-                {/* Search icon */}
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     {loading ? (
                         <div className="spinner" />
@@ -208,18 +157,16 @@ function LocationInput({
                     )}
                 </div>
 
-                {/* Input field */}
                 <input
                     type="text"
                     value={value || ''}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="pl-10 pr-10" // Space for icons
+                    className="pl-10 pr-10"
                     autoComplete="off"
-                    spellCheck="false" // Prevent spell check on location names
+                    spellCheck="false"
                 />
 
-                {/* Clear button */}
                 {value && (
                     <button
                         type="button"
@@ -237,14 +184,9 @@ function LocationInput({
     )
 }
 
-/**
- * Primary Button Component
- * 
- * For form submission and primary actions
- * Includes loading states and accessibility features
- */
-function PrimaryButton({
+function Button({
     children,
+    variant = 'primary',
     loading = false,
     disabled = false,
     onClick,
@@ -254,13 +196,14 @@ function PrimaryButton({
     ...props
 }) {
     const isDisabled = disabled || loading
+    const variantClass = variant === 'primary' ? 'btn-primary' : 'btn-secondary'
 
     return (
         <button
             type={type}
             onClick={onClick}
             disabled={isDisabled}
-            className={`btn-primary ${className}`}
+            className={`${variantClass} ${className}`}
             aria-label={loading ? loadingText : undefined}
             {...props}
         >
@@ -276,35 +219,6 @@ function PrimaryButton({
     )
 }
 
-/**
- * Secondary Button Component
- * 
- * For secondary actions like reset, cancel
- */
-function SecondaryButton({
-    children,
-    onClick,
-    type = "button",
-    className = "",
-    ...props
-}) {
-    return (
-        <button
-            type={type}
-            onClick={onClick}
-            className={`btn-secondary ${className}`}
-            {...props}
-        >
-            {children}
-        </button>
-    )
-}
-
-/**
- * Quick Date Range Buttons
- * 
- * Provides common date range shortcuts for better UX
- */
 function QuickDateRanges({ onRangeSelect, className = "" }) {
     const ranges = [
         { label: 'Today', days: 0 },
@@ -343,16 +257,10 @@ function QuickDateRanges({ onRangeSelect, className = "" }) {
     )
 }
 
-// Export all components using the compound component pattern
-const Input = {
+const InputComponents = {
     Text: TextInput,
     Date: DateInput,
     Location: LocationInput
 }
 
-const Button = {
-    Primary: PrimaryButton,
-    Secondary: SecondaryButton
-}
-
-export { Input, Button, QuickDateRanges }
+export { InputComponents as Input, Button, QuickDateRanges }

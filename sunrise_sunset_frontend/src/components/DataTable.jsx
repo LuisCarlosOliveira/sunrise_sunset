@@ -1,70 +1,7 @@
-// Comprehensive data table components for displaying detailed sunrise/sunset information
-// These tables provide precise values and comprehensive details that complement our charts
 import React, { useState, useMemo } from 'react'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { formatTime, formatDuration, formatGoldenHour } from '@/utils/timeUtils'
 
-/**
- * Utility function to format time strings for display
- * Converts "HH:MM:SS UTC" to more readable formats
- */
-function formatTime(timeString, format12Hour = false) {
-    if (!timeString || timeString === '00:00:01 UTC') return 'N/A'
-
-    const timeOnly = timeString.replace(' UTC', '')
-
-    if (!format12Hour) {
-        return timeOnly.substring(0, 5) // Return HH:MM format
-    }
-
-    // Convert to 12-hour format for better readability
-    const [hours, minutes] = timeOnly.split(':').map(Number)
-    const ampm = hours >= 12 ? 'PM' : 'AM'
-    const displayHours = hours % 12 || 12
-    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`
-}
-
-/**
- * Format duration from "HH:MM:SS" to readable text
- */
-function formatDuration(durationString) {
-    if (!durationString) return 'N/A'
-
-    const [hours, minutes] = durationString.split(':').map(Number)
-    return `${hours}h ${minutes}m`
-}
-
-/**
- * Format golden hour data for display
- */
-function formatGoldenHour(goldenHourData, type = 'morning') {
-    if (!goldenHourData) return { start: 'N/A', end: 'N/A', duration: 'N/A' }
-
-    const data = type === 'morning' ? goldenHourData.morning_golden_hour : goldenHourData.evening_golden_hour
-
-    if (!data) return { start: 'N/A', end: 'N/A', duration: 'N/A' }
-
-    try {
-        const startTime = format(parseISO(data.start), 'HH:mm')
-        const endTime = format(parseISO(data.end), 'HH:mm')
-
-        // Calculate duration
-        const start = parseISO(data.start)
-        const end = parseISO(data.end)
-        const durationMs = end - start
-        const durationMinutes = Math.round(durationMs / 60000)
-        const duration = `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60}m`
-
-        return { start: startTime, end: endTime, duration }
-    } catch (error) {
-        console.warn('Error formatting golden hour data:', error)
-        return { start: 'N/A', end: 'N/A', duration: 'N/A' }
-    }
-}
-
-/**
- * Table Header Component with Sorting
- * Provides accessible, sortable column headers with visual indicators
- */
 function TableHeader({ children, sortKey, currentSort = {}, onSort, className = "" }) {
     const isSorted = currentSort.key === sortKey
     const isAscending = isSorted && currentSort.direction === 'asc'
@@ -109,16 +46,10 @@ function TableHeader({ children, sortKey, currentSort = {}, onSort, className = 
     )
 }
 
-/**
- * Main Data Table Component
- * Displays comprehensive sunrise/sunset data with sorting and responsive design
- */
 export function SunriseDataTable({ data, className = "" }) {
-    // State for table sorting
     const [sort, setSort] = useState({ key: 'date', direction: 'asc' })
     const [use12HourFormat, setUse12HourFormat] = useState(false)
 
-    // Memoized sorted data for performance
     const sortedData = useMemo(() => {
         if (!data?.days) return []
 
@@ -169,7 +100,6 @@ export function SunriseDataTable({ data, className = "" }) {
 
     return (
         <div className={`card p-6 ${className}`}>
-            {/* Table Header with Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
                 <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -180,7 +110,6 @@ export function SunriseDataTable({ data, className = "" }) {
                     </p>
                 </div>
 
-                {/* Table Controls */}
                 <div className="flex items-center space-x-4">
                     <label className="flex items-center space-x-2 text-sm">
                         <input
@@ -198,7 +127,6 @@ export function SunriseDataTable({ data, className = "" }) {
                 </div>
             </div>
 
-            {/* Responsive Table Container */}
             <div className="overflow-x-auto -mx-6 px-6">
                 <table className="data-table min-w-full">
                     <thead>
@@ -274,7 +202,6 @@ export function SunriseDataTable({ data, className = "" }) {
                 </table>
             </div>
 
-            {/* Table Footer with Summary Statistics */}
             <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                     <div className="bg-blue-50 p-3 rounded-lg">
@@ -322,10 +249,6 @@ export function SunriseDataTable({ data, className = "" }) {
     )
 }
 
-/**
- * Compact Table Component
- * A simplified version for smaller spaces or quick reference
- */
 export function CompactSunriseTable({ data, className = "" }) {
     if (!data?.days?.length) return null
 

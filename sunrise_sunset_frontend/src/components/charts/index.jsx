@@ -1,5 +1,3 @@
-// Data visualization components using Recharts for interactive sunrise/sunset displays
-// These components transform raw API data into meaningful visual insights
 import React from 'react'
 import {
     LineChart,
@@ -10,46 +8,12 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
-    BarChart,
-    Bar,
     Area,
     AreaChart
 } from 'recharts'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { timeToMinutes, minutesToTime, parseDayLength, parseGoldenHourTime } from '@/utils/timeUtils'
 
-/**
- * Utility function to convert time strings to minutes for chart calculations
- * This allows us to plot times on a numerical axis for meaningful comparisons
- * 
- * @param {string} timeString - Time in "HH:MM:SS UTC" format
- * @returns {number} - Minutes since midnight
- */
-function timeToMinutes(timeString) {
-    if (!timeString || timeString === '00:00:01 UTC') return null
-
-    const [hours, minutes] = timeString.replace(' UTC', '').split(':').map(Number)
-    return hours * 60 + minutes
-}
-
-/**
- * Utility function to format minutes back to readable time
- * This provides clean axis labels and tooltip displays
- * 
- * @param {number} minutes - Minutes since midnight
- * @returns {string} - Formatted time string
- */
-function minutesToTime(minutes) {
-    if (minutes === null || minutes === undefined) return '--'
-
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-}
-
-/**
- * Custom tooltip component for charts
- * Provides rich, contextual information when users hover over data points
- */
 function ChartTooltip({ active, payload, label }) {
     if (!active || !payload || !payload.length) return null
 
@@ -71,61 +35,39 @@ function ChartTooltip({ active, payload, label }) {
     )
 }
 
-/**
- * Transform raw API data into chart-ready format
- * This function handles the complex data transformation needed for visualization
- */
 function prepareChartData(apiData) {
     if (!apiData?.days) return []
 
     return apiData.days.map(day => {
-        // Parse the date for proper formatting
         const date = new Date(day.date)
         const formattedDate = format(date, 'MMM dd')
 
-        // Convert all time values to minutes for plotting
         const chartPoint = {
             date: formattedDate,
             fullDate: day.date,
             location: day.location,
 
-            // Core sunrise/sunset times
             sunrise: timeToMinutes(day.sunrise),
             sunset: timeToMinutes(day.sunset),
             solarNoon: timeToMinutes(day.solar_noon),
 
-            // Calculate day length in minutes
-            dayLength: day.day_length ? (() => {
-                const [hours, minutes, seconds] = day.day_length.split(':').map(Number)
-                return hours * 60 + minutes + Math.round(seconds / 60)
-            })() : null,
+            dayLength: parseDayLength(day.day_length),
 
-            // Twilight times for advanced visualizations
             civilTwilightStart: timeToMinutes(day.twilight?.civil_begin),
             civilTwilightEnd: timeToMinutes(day.twilight?.civil_end),
             nauticalTwilightStart: timeToMinutes(day.twilight?.nautical_begin),
             nauticalTwilightEnd: timeToMinutes(day.twilight?.nautical_end),
 
-            // Golden hour data (if available)
-            morningGoldenStart: day.golden_hour?.morning_golden_hour?.start ?
-                timeToMinutes(format(parseISO(day.golden_hour.morning_golden_hour.start), 'HH:mm:ss') + ' UTC') : null,
-            morningGoldenEnd: day.golden_hour?.morning_golden_hour?.end ?
-                timeToMinutes(format(parseISO(day.golden_hour.morning_golden_hour.end), 'HH:mm:ss') + ' UTC') : null,
-            eveningGoldenStart: day.golden_hour?.evening_golden_hour?.start ?
-                timeToMinutes(format(parseISO(day.golden_hour.evening_golden_hour.start), 'HH:mm:ss') + ' UTC') : null,
-            eveningGoldenEnd: day.golden_hour?.evening_golden_hour?.end ?
-                timeToMinutes(format(parseISO(day.golden_hour.evening_golden_hour.end), 'HH:mm:ss') + ' UTC') : null,
+            morningGoldenStart: parseGoldenHourTime(day.golden_hour, 'morning', 'start'),
+            morningGoldenEnd: parseGoldenHourTime(day.golden_hour, 'morning', 'end'),
+            eveningGoldenStart: parseGoldenHourTime(day.golden_hour, 'evening', 'start'),
+            eveningGoldenEnd: parseGoldenHourTime(day.golden_hour, 'evening', 'end'),
         }
 
         return chartPoint
     })
 }
 
-/**
- * Main Sunrise/Sunset Times Chart
- * Shows the progression of sunrise and sunset times over the selected date range
- * This is the primary visualization that most users will focus on
- */
 export function SunriseChart({ data, className = "" }) {
     const chartData = prepareChartData(data)
 
@@ -171,7 +113,6 @@ export function SunriseChart({ data, className = "" }) {
                         <Tooltip content={<ChartTooltip />} />
                         <Legend />
 
-                        {/* Sunrise line */}
                         <Line
                             type="monotone"
                             dataKey="sunrise"
@@ -182,7 +123,6 @@ export function SunriseChart({ data, className = "" }) {
                             connectNulls={false}
                         />
 
-                        {/* Sunset line */}
                         <Line
                             type="monotone"
                             dataKey="sunset"
@@ -193,7 +133,6 @@ export function SunriseChart({ data, className = "" }) {
                             connectNulls={false}
                         />
 
-                        {/* Solar noon line (optional, lighter) */}
                         <Line
                             type="monotone"
                             dataKey="solarNoon"
@@ -211,11 +150,6 @@ export function SunriseChart({ data, className = "" }) {
     )
 }
 
-/**
- * Day Length Chart
- * Shows how the length of daylight changes over time
- * This provides insights into seasonal patterns
- */
 export function DayLengthChart({ data, className = "" }) {
     const chartData = prepareChartData(data)
 
@@ -259,7 +193,6 @@ export function DayLengthChart({ data, className = "" }) {
                             strokeWidth={2}
                         />
 
-                        {/* Gradient definition for area fill */}
                         <defs>
                             <linearGradient id="dayLengthGradient" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -273,11 +206,6 @@ export function DayLengthChart({ data, className = "" }) {
     )
 }
 
-/**
- * Golden Hour Chart
- * Visualizes the timing and duration of golden hour periods
- * This is particularly valuable for photographers and outdoor enthusiasts
- */
 export function GoldenHourChart({ data, className = "" }) {
     const chartData = prepareChartData(data)
 
@@ -317,7 +245,6 @@ export function GoldenHourChart({ data, className = "" }) {
                         <Tooltip content={<ChartTooltip />} />
                         <Legend />
 
-                        {/* Morning golden hour */}
                         <Line
                             type="monotone"
                             dataKey="morningGoldenStart"
@@ -337,7 +264,6 @@ export function GoldenHourChart({ data, className = "" }) {
                             connectNulls={false}
                         />
 
-                        {/* Evening golden hour */}
                         <Line
                             type="monotone"
                             dataKey="eveningGoldenStart"
@@ -363,26 +289,18 @@ export function GoldenHourChart({ data, className = "" }) {
     )
 }
 
-/**
- * Chart Layout Component
- * Orchestrates the display of multiple charts in a responsive grid
- * This provides a comprehensive dashboard view of all solar data
- */
 export function ChartsContainer({ data }) {
     if (!data) return null
 
     return (
         <div className="space-y-8">
-            {/* Primary chart - always shown */}
             <SunriseChart data={data} />
 
-            {/* Secondary charts in responsive grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <DayLengthChart data={data} />
                 <GoldenHourChart data={data} />
             </div>
 
-            {/* Chart summary information */}
             <div className="card p-6 bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div className="flex items-center space-x-3 mb-4">
                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

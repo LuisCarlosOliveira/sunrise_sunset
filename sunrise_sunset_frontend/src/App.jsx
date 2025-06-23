@@ -4,33 +4,14 @@ import { ChartsContainer } from '@/components/charts'
 import { SunriseDataTable } from '@/components/DataTable'
 import { useSearchWithApi } from '@/hooks/useApi'
 
-/**
- * Main App component for the Sunrise Sunset application
- * 
- * This component orchestrates the entire user experience by managing
- * the application's central state and coordinating between components.
- * 
- * IMPORTANT: This component manages the single source of truth for
- * search state, which is then shared with child components as needed.
- */
 function App() {
-  // Single source of truth for all search-related state
-  // This hook instance is shared across the entire application
   const searchState = useSearchWithApi()
-
-  const {
-    data,           // The formatted sunrise/sunset data from the API
-    loading,        // Whether we're currently fetching data
-    error,          // Any error that occurred during the last request
-    hasSearched,    // Whether the user has attempted a search yet
-    hasData         // Whether we have valid data to display
-  } = searchState
+  const { data, loading, hasSearched, hasData } = searchState
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-8">
 
-        {/* Application Header - Always visible */}
         <header className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gradient-sunrise mb-4">
             Sunrise Sunset Tracker
@@ -42,17 +23,12 @@ function App() {
           </p>
         </header>
 
-        {/* Main Application Content */}
         <main className="max-w-7xl mx-auto space-y-8">
 
-          {/* Search Interface - Pass the search state as props */}
-          {/* This ensures the SearchForm and App component share the same state */}
           <SearchForm searchState={searchState} />
 
-          {/* Data Visualization Section - Only shown when we have successful results */}
           {hasData && (
             <section className="space-y-8">
-              {/* Section Header with Dynamic Information */}
               <div className="text-center">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
                   Solar Data for {data.location}
@@ -80,7 +56,6 @@ function App() {
             </section>
           )}
 
-          {/* Welcome State - Show when no search has been performed */}
           {!hasSearched && !loading && (
             <section className="text-center py-16">
               <div className="max-w-md mx-auto">
@@ -126,7 +101,6 @@ function App() {
           )}
         </main>
 
-        {/* Application Footer - Always visible */}
         <footer className="text-center mt-16 text-gray-500">
           <p className="text-sm">
             Built with React, Vite, and Tailwind CSS •

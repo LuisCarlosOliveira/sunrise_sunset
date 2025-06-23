@@ -1,67 +1,37 @@
-// SearchForm.jsx - Main search interface component
-// Location: src/components/SearchForm.jsx
-
 import React from 'react'
 import { Input, Button, QuickDateRanges } from '@/components/forms'
-
-/**
- * SearchForm Component
- * 
- * This component now receives the search state as props from the parent App component.
- * This ensures that the form state and the application's data display state are synchronized.
- * 
- * This pattern is called "lifting state up" - we move shared state to the lowest common
- * parent component that needs to access it.
- */
 export default function SearchForm({ searchState }) {
-    // Destructure all the state and actions from the shared searchState prop
     const {
-        // Form state
         formData,
         validationErrors,
         updateField,
 
-        // API state
         loading,
         error,
         hasSearched,
 
-        // Actions
         performSearch,
         resetAll,
         retryLastSearch,
         canRetry
     } = searchState
 
-    /**
-     * Handle quick date range selection
-     * This provides a better UX by allowing common date ranges with one click
-     */
     const handleQuickRange = React.useCallback((range) => {
         updateField('startDate', range.startDate)
         updateField('endDate', range.endDate)
     }, [updateField])
 
-    /**
-     * Handle form submission
-     * The actual API call is managed by our hook
-     */
     const handleSubmit = React.useCallback((e) => {
         e.preventDefault()
         performSearch()
     }, [performSearch])
 
-    /**
-     * Handle retry action
-     * Shows user-friendly retry UI for failed requests
-     */
     const handleRetry = React.useCallback(() => {
         retryLastSearch()
     }, [retryLastSearch])
 
     return (
         <div className="card p-8 max-w-2xl mx-auto">
-            {/* Form Header */}
             <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-sunrise-500 to-sunset-500 rounded-full mb-4">
                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,9 +46,7 @@ export default function SearchForm({ searchState }) {
                 </p>
             </div>
 
-            {/* Main Search Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Location Input */}
                 <Input.Location
                     label="Location"
                     value={formData.location}
@@ -90,10 +58,8 @@ export default function SearchForm({ searchState }) {
                     onClear={() => updateField('location', '')}
                 />
 
-                {/* Date Range Section */}
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Start Date */}
                         <Input.Date
                             label="Start Date"
                             value={formData.startDate}
@@ -103,7 +69,6 @@ export default function SearchForm({ searchState }) {
                             helpText="Select the first day"
                         />
 
-                        {/* End Date */}
                         <Input.Date
                             label="End Date"
                             value={formData.endDate}
@@ -114,13 +79,11 @@ export default function SearchForm({ searchState }) {
                         />
                     </div>
 
-                    {/* Quick Date Range Buttons */}
                     <QuickDateRanges onRangeSelect={handleQuickRange} />
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                    <Button.Primary
+                    <Button
                         type="submit"
                         loading={loading}
                         loadingText="Searching..."
@@ -130,11 +93,11 @@ export default function SearchForm({ searchState }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         Search Sunrise Data
-                    </Button.Primary>
+                    </Button>
 
-                    {/* Reset Button - only show if there's data to reset */}
                     {hasSearched && (
-                        <Button.Secondary
+                        <Button
+                            variant="secondary"
                             onClick={resetAll}
                             disabled={loading}
                             className="flex-1 sm:flex-none"
@@ -143,7 +106,7 @@ export default function SearchForm({ searchState }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             Reset
-                        </Button.Secondary>
+                        </Button>
                     )}
                 </div>
             </form>
